@@ -1,7 +1,7 @@
 use ntex::web::{self, middleware, App, HttpRequest};
-#[path = "controller/ping.rs"] mod ping;
-#[path= "controller/json.rs"] mod json;
-#[path= "controller/name.rs"] mod name;
+mod errors;
+mod models;
+mod services;
 
 async fn index(req: HttpRequest) -> &'static str {
     println!("REQ: {:?}", req);
@@ -17,17 +17,20 @@ async fn main() -> std::io::Result<()> {
         App::new()
             // enable logger
             .wrap(middleware::Logger::default())
+            // Register swagger endpoints
+            .configure(services::openapi::ntex_config)
+            // Register todo endpoints
+            .configure(services::name::ntex_config)
+            .configure(services::json::ntex_config)
+            .configure(services::ping::ntex_config)
+            // Default endpoint for unregisterd endpoints
+            .default_service(web::route().to(services::default))
             .service((
-                name::name_id,
-                name::only_name,
-                json::json_test,
-                json::json_test_post,
-                ping::ping,
                 web::resource("/index.html").to(|| async { "Hello world!" }),
                 web::resource("/").to(index),
             ))
     })
-    .bind("127.0.0.1:8080")?
+    .bind("127.0.0.1:8585")?
     .run()
     .await
 }
