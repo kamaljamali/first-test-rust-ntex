@@ -6,6 +6,7 @@ use std::sync::Arc;
 
 use crate::errors::error::HttpError;
 use crate::models::ping_type::{MyObj, PingObject};
+use crate::models::students_model::StudentModel;
 use ntex::http;
 use ntex::util::Bytes;
 use ntex::web;
@@ -21,7 +22,7 @@ use utoipa::OpenApi;
         json::json_test,
         json::json_test_post,
     ),
-    components(schemas(HttpError, PingObject, MyObj))
+    components(schemas(HttpError, PingObject, MyObj, StudentModel))
 )]
 pub(crate) struct ApiDoc;
 

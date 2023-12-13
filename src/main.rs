@@ -3,9 +3,12 @@ use ntex::web::{self, middleware, App, HttpRequest};
 mod db;
 mod errors;
 mod models;
+mod schemas;
 mod services;
 use dotenv::dotenv;
 use std::env;
+#[macro_use]
+extern crate diesel;
 
 async fn index(req: HttpRequest) -> &'static str {
     println!("REQ: {:?}", req);
@@ -13,6 +16,7 @@ async fn index(req: HttpRequest) -> &'static str {
 }
 
 #[ntex::main]
+// async fn main() -> Result<(), Box<dyn std::error::Error>> {
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "info");
     env_logger::init();
@@ -21,9 +25,9 @@ async fn main() -> std::io::Result<()> {
     let pool = db_postgres::create_pool();
     db_postgres::perform_async_query(&pool).await;
     
-    let host = env::var("HOST").expect("Please set host in .env");
-    let port = env::var("PORT").expect("Please set port in .env");
-
+    let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
+    let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
+    
     web::server(|| {
         App::new()
             // enable logger
