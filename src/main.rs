@@ -1,7 +1,11 @@
+use db::db_postgres;
 use ntex::web::{self, middleware, App, HttpRequest};
+mod db;
 mod errors;
 mod models;
 mod services;
+use dotenv::dotenv;
+use std::env;
 
 async fn index(req: HttpRequest) -> &'static str {
     println!("REQ: {:?}", req);
@@ -12,6 +16,13 @@ async fn index(req: HttpRequest) -> &'static str {
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "info");
     env_logger::init();
+    dotenv().ok();
+
+    let pool = db_postgres::create_pool();
+    db_postgres::perform_async_query(&pool).await;
+    
+    let host = env::var("HOST").expect("Please set host in .env");
+    let port = env::var("PORT").expect("Please set port in .env");
 
     web::server(|| {
         App::new()
@@ -30,7 +41,7 @@ async fn main() -> std::io::Result<()> {
                 web::resource("/").to(index),
             ))
     })
-    .bind("127.0.0.1:8585")?
+    .bind(format!("{}:{}", host, port))?
     .run()
     .await
 }

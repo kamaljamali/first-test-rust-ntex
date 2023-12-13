@@ -1,23 +1,38 @@
-use ntex::web;
 use ntex::http;
+use ntex::web;
+use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
-use serde::{Serialize, Deserialize};
 
 /// An http error response
 #[derive(Clone, Debug, Serialize, Deserialize, ToSchema)]
 pub struct HttpError {
-  /// The error message
-  pub msg: String,
-  /// The http status code, skipped in serialization
-  #[serde(skip)]
-  pub status: http::StatusCode,
+    /// The error message
+    pub msg: String,
+    /// The http status code, skipped in serialization
+    #[serde(skip)]
+    pub status: http::StatusCode,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, ToSchema)]
+pub struct CustomError {
+    pub error_status_code: u16,
+    pub error_message: String,
+}
+
+
+impl CustomError {
+  pub fn new(error_status_code: u16, error_message: String) -> CustomError {
+      CustomError {
+          error_status_code,
+          error_message,
+      }
+  }
 }
 
 /// Helper function to display an HttpError
 impl std::fmt::Display for HttpError {
-  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    write!(f, "[{}] {}", self.status, self.msg)
-  }
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[{}] {}", self.status, self.msg)
+    }
 }
 
 /// Implement standard error for HttpError
@@ -25,7 +40,7 @@ impl std::error::Error for HttpError {}
 
 /// Helper function to convert an HttpError into a ntex::web::HttpResponse
 impl web::WebResponseError for HttpError {
-  fn error_response(&self, _: &web::HttpRequest) -> web::HttpResponse {
-    web::HttpResponse::build(self.status).json(&self)
-  }
+    fn error_response(&self, _: &web::HttpRequest) -> web::HttpResponse {
+        web::HttpResponse::build(self.status).json(&self)
+    }
 }
