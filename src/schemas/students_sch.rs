@@ -4,7 +4,7 @@ table! {
         family -> Varchar,
         average_dip -> Integer,
         // other -> serde_json::Value,
-        // fields -> serde_json::Value,
+        fields -> Array<Text>,
         // _id -> Timestamptz,
         }
 }

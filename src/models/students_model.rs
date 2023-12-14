@@ -12,8 +12,8 @@ pub struct OtherStudent {
 pub struct StudentModel {
     pub name: String,
     pub family: String,
-    pub average_dip:i32
+    pub average_dip:i32,
     // pub other: serde_json::Value,
-    // pub fields: serde_json::Value,
+    pub fields: Vec<String>,
     // pub _id: String,
 }
