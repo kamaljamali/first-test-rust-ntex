@@ -1,4 +1,4 @@
-use crate::{db_postgres::{get_all_students, get_db_pool}, db::db_postgres::{create_pool, get_all_students2}};
+use crate::db_postgres::{establish_connection, get_all_students2};
 use chrono::Local;
 use ntex::web::{self, HttpRequest, HttpResponse};
 
@@ -15,19 +15,10 @@ mod ping_type;
 )]
 #[web::get("/ping")]
 pub async fn ping(req: HttpRequest) -> HttpResponse {
-    let db_pool = get_db_pool();
-    let result = get_all_students2(&db_pool).await;
-    match result {
-        Ok(students) => {
-            // موارد مربوط به موفقیت
-            for student in students {
-                println!("{:?}", student);
-            }
-        }
-        Err(e) => {
-            // موارد مربوط به خطا
-            eprintln!("Error: {:?}", e);
-        }
+    let db_pool = &mut establish_connection();
+    let result = get_all_students2(db_pool).await;
+    if let Ok(student) = result {
+        println!("{:?}", student);
     }
 
     let mut t = String::from("No Ip");

@@ -3,7 +3,7 @@ table! {
         name -> Varchar,
         family -> Varchar,
         average_dip -> Integer,
-        // other -> serde_json::Value,
+        other -> Jsonb,
         fields -> Array<Text>,
         // _id -> Timestamptz,
         }

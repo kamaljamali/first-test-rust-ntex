@@ -22,8 +22,8 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
     dotenv().ok();
 
-    let pool = db_postgres::create_pool();
-    db_postgres::perform_async_query(&pool).await;
+    let pool = &mut db_postgres::establish_connection();
+    db_postgres::perform_async_query(pool).await;
     
     let host = env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
     let port = env::var("PORT").unwrap_or_else(|_| "8080".to_string());
