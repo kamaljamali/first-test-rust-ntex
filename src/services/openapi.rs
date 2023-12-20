@@ -1,12 +1,12 @@
 use super::json;
 use super::name;
 use super::ping;
-
+use super::student_service;
 use std::sync::Arc;
 
 use crate::errors::error::HttpError;
 use crate::models::ping_type::{MyObj, PingObject};
-use crate::models::students_model::StudentModel;
+use crate::models::students_model::{Fields, StudentModel};
 use ntex::http;
 use ntex::util::Bytes;
 use ntex::web;
@@ -21,8 +21,12 @@ use utoipa::OpenApi;
         ping::ping,
         json::json_test,
         json::json_test_post,
+        student_service::get_students_test,
+        student_service::insert_student,
+        student_service::update_student,
+        student_service::insert_field_student,
     ),
-    components(schemas(HttpError, PingObject, MyObj, StudentModel))
+    components(schemas(HttpError, PingObject, MyObj, StudentModel, Fields))
 )]
 pub(crate) struct ApiDoc;
 

@@ -5,13 +5,20 @@ use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
 #[derive(Clone, PartialEq, Debug, Serialize, Deserialize, ToSchema, AsJsonb)]
+pub struct Fields {
+    pub fields: Vec<String>,
+}
+
+#[derive(Clone, PartialEq, Debug, Serialize, Deserialize, ToSchema, AsJsonb)]
 pub struct OtherStudent {
     pub test: String,
     pub admin: bool,
     pub birthdate: String,
 }
 
-#[derive(Clone, Queryable, PartialEq, Debug, Serialize, Deserialize, ToSchema, Selectable)]
+#[derive(
+    Clone, Queryable, Serialize, Deserialize, PartialEq, Debug, ToSchema, Selectable, Insertable,
+)]
 #[diesel(table_name = students)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct StudentModel {

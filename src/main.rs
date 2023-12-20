@@ -38,6 +38,7 @@ async fn main() -> std::io::Result<()> {
             .configure(services::name::ntex_config)
             .configure(services::json::ntex_config)
             .configure(services::ping::ntex_config)
+            .configure(services::student_service::ntex_config)
             // Default endpoint for unregisterd endpoints
             .default_service(web::route().to(services::default))
             .service((
